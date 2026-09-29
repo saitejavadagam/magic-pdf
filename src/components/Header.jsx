@@ -11,7 +11,7 @@ const Header = () => {
                     <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                    <h1 className="text-xl font-bold bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                         MagicPDF
                     </h1>
                     <p className="text-xs text-slate-400">Secure PDF Tools</p>

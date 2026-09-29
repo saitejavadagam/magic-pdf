@@ -58,7 +58,7 @@ const App = () => {
             multiple={currentTab.multiple}
             title={currentTab.title}
             subtitle={currentTab.subtitle}
-            onFileSelected={handleFiles}
+            onFilesSelected={handleFiles}
           />
         </div>
       </main>
