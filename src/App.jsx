@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import Header from './components/Header'
 import DropZone from './components/DropZone'
+import JpgToPdf from './components/JpgToPdf'
 import { Image, FileOutput, Minimize2 } from 'lucide-react'
 
 const App = () => {
 
   const [activeTab, setActiveTab] = useState('jpg-to-pdf');
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const tabs = [
     { id: 'jpg-to-pdf', label: 'JPG to PDF', icon: Image, accept: 'image/jpeg, image/png, image/webp', multiple: true, title: 'Convert Images to PDF', subtitle: 'Drag & drop JPG/PNG images here' },
@@ -15,9 +17,13 @@ const App = () => {
 
   const currentTab = tabs.find((t) => t.id === activeTab);
 
-  const handleFiles = (files) => {
-    console.log(`Files selected for [${activeTab}]:`, files);
-    alert(`Received ${files.length} file(s) for ${currentTab.label}`);
+  const handleTabChange = (id) => {
+    setActiveTab(id);
+    setSelectedFiles([]);
+  }
+
+  const handleFilesSelected = (files) => {
+    setSelectedFiles(files);
   }
 
   return (
@@ -28,18 +34,18 @@ const App = () => {
         {/* Tool Navigation Tabs */}
         <div className='flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800 mb-8 max-w-md mx-auto'>
           {
-            tabs.map((tab)=>{
+            tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
 
               return (
                 <button
                   key={tab.id}
-                  onClick={()=> setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-medium text-sm transition-all
-                    ${isActive 
-                      ?'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                      :'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}
+                    ${isActive
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}
                     `}
                 >
                   <Icon className='w-4 h-4' />
@@ -50,16 +56,24 @@ const App = () => {
           }
         </div>
 
-        {/* Dropzone container */}
+        {/* Dynamic Tool Container */}
         <div className='bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl'>
-          <DropZone 
-            key={activeTab}
-            accept={currentTab.accept}
-            multiple={currentTab.multiple}
-            title={currentTab.title}
-            subtitle={currentTab.subtitle}
-            onFilesSelected={handleFiles}
-          />
+          {
+            selectedFiles.length === 0 ? (
+              <DropZone
+                key={activeTab}
+                accept={currentTab.accept}
+                multiple={currentTab.multiple}
+                title={currentTab.title}
+                subtitle={currentTab.subtitle}
+                onFilesSelected={handleFilesSelected}
+              />
+            ) : (
+              activeTab === 'jpg-to-pdf' && (
+                <JpgToPdf initialFiles={selectedFiles} onReset={() => setSelectedFiles([])} />
+              )
+            )
+          }
         </div>
       </main>
     </div>
