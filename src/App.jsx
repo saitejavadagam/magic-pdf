@@ -3,6 +3,7 @@ import Header from './components/Header'
 import DropZone from './components/DropZone'
 import JpgToPdf from './components/JpgToPdf'
 import { Image, FileOutput, Minimize2 } from 'lucide-react'
+import PdfToJpg from './components/PdfToJpg'
 
 const App = () => {
 
@@ -68,11 +69,13 @@ const App = () => {
                 subtitle={currentTab.subtitle}
                 onFilesSelected={handleFilesSelected}
               />
-            ) : (
-              activeTab === 'jpg-to-pdf' && (
+            ) :
+              activeTab === 'jpg-to-pdf' ? (
                 <JpgToPdf initialFiles={selectedFiles} onReset={() => setSelectedFiles([])} />
-              )
-            )
+              ) :
+                activeTab === 'pdf-to-jpg' ? (
+                  <PdfToJpg file={selectedFiles[0]} onReset={() => setSelectedFiles([])} />
+                ) : null
           }
         </div>
       </main>
