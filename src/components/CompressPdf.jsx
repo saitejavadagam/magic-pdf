@@ -137,9 +137,27 @@ const CompressPdf = ({ file, onReset }) => {
                 })}
             </div>
 
-            {/* Action / Results */}
-            {compressedResult ? (
-                <div className="bg-slate-800/80 rounded-2xl border border-emerald-500/30 p-6 text-center space-y-4">
+            {/* Always render the Compress / Re-Compress button */}
+            <button
+                onClick={handleCompress}
+                disabled={isCompressing}
+                className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 text-white font-semibold text-base rounded-2xl shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all"
+            >
+                {isCompressing ? (
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                ) : (
+                    <Minimize2 className="w-5 h-5" />
+                )}
+                {isCompressing
+                    ? 'Compressing PDF...'
+                    : compressedResult
+                        ? 'Re-compress with Selected Level'
+                        : 'Compress PDF File'}
+            </button>
+
+            {/* Results */}
+            {compressedResult && (
+                <div className="bg-slate-800/80 rounded-2xl border border-emerald-500/30 p-6 text-center space-y-4 animate-fade-in mt-6">
                     <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-full w-fit mx-auto border border-emerald-500/20">
                         <CheckCircle2 className="w-8 h-8" />
                     </div>
@@ -147,8 +165,14 @@ const CompressPdf = ({ file, onReset }) => {
                     <div>
                         <h3 className="text-xl font-bold text-slate-100">Compression Complete!</h3>
                         <p className="text-sm text-slate-400 mt-1">
-                            Reduced from <span className="line-through text-slate-500">{formatBytes(compressedResult.originalSize)}</span> to{' '}
-                            <span className="text-emerald-400 font-semibold">{formatBytes(compressedResult.size)}</span>
+                            Reduced from{' '}
+                            <span className="line-through text-slate-500">
+                                {formatBytes(compressedResult.originalSize)}
+                            </span>{' '}
+                            to{' '}
+                            <span className="text-emerald-400 font-semibold">
+                                {formatBytes(compressedResult.size)}
+                            </span>
                         </p>
                     </div>
 
@@ -163,15 +187,6 @@ const CompressPdf = ({ file, onReset }) => {
                         <Download className="w-5 h-5" /> Download Compressed PDF
                     </button>
                 </div>
-            ) : (
-                <button
-                    onClick={handleCompress}
-                    disabled={isCompressing}
-                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 text-white font-semibold text-base rounded-2xl shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all"
-                >
-                    {isCompressing ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Minimize2 className="w-5 h-5" />}
-                    {isCompressing ? 'Compressing PDF...' : 'Compress PDF File'}
-                </button>
             )}
         </div>
     )

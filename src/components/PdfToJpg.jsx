@@ -154,7 +154,7 @@ const PdfToJpg = ({ file, onReset }) => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-96 overflow-y-auto pr-1">
             {pages.map(({ pageNum, dataUrl }) => (
               <div key={pageNum} className="group relative bg-slate-800/80 rounded-xl border border-slate-700/60 p-2 flex flex-col items-center">
-                <div className="relative w-full aspect-[3/4] bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center">
+                <div className="relative w-full aspect-3/4 bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center">
                   <img src={dataUrl} alt={`Page ${pageNum}`} className="max-w-full max-h-full object-contain" />
                   <span className="absolute top-2 left-2 px-2 py-0.5 bg-slate-900/80 backdrop-blur-md text-xs font-bold text-slate-300 rounded-md border border-slate-700">
                     Page {pageNum}
