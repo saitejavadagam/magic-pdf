@@ -1,76 +1,62 @@
-import { useState, useEffect } from 'react';
-import { jsPDF } from 'jspdf';
-import { Trash2, FileDown, Plus, MoveLeft, MoveRight, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { PDFDocument } from 'pdf-lib';
+import { Trash2, FileDown, Plus, MoveLeft, MoveRight } from 'lucide-react';
 
 export default function JpgToPdf({ initialFiles, onReset }) {
   const [images, setImages] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [orientation, setOrientation] = useState('portrait');
   const [pageSize, setPageSize] = useState('a4');
   const [margin, setMargin] = useState('none');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Helper to safely read File objects into Data URLs
-  const fileToDataUrl = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
-  // Convert incoming initial files to Data URL previews on mount
+  // 1. Silently track the latest images for the unmount cleanup
+  const imagesRef = useRef(images);
   useEffect(() => {
-    const processInitialFiles = async () => {
-      setIsLoading(true);
-      try {
-        const processed = await Promise.all(
-          initialFiles.map(async (file) => {
-            const dataUrl = await fileToDataUrl(file);
-            return {
-              id: Math.random().toString(36).substring(2, 9),
-              file,
-              previewUrl: dataUrl,
-              name: file.name,
-            };
-          })
-        );
-        setImages(processed);
-      } catch (err) {
-        console.error('Error reading files:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    imagesRef.current = images;
+  }, [images]);
 
+  // 2. Initialize files inside useEffect (Fixes Strict Mode broken images & ESLint warnings)
+  useEffect(() => {
     if (initialFiles && initialFiles.length > 0) {
-      processInitialFiles();
+      const processed = initialFiles.map((file) => ({
+        id: Math.random().toString(36).substring(2, 9),
+        file,
+        previewUrl: URL.createObjectURL(file),
+        name: file.name,
+      }));
+      setImages(processed);
     }
   }, [initialFiles]);
 
+  // 3. Clean up memory ONLY when the component permanently unmounts
+  useEffect(() => {
+    return () => {
+      imagesRef.current.forEach((img) => URL.revokeObjectURL(img.previewUrl));
+    };
+  }, []);
+
   // Add more image files
-  const handleAddMore = async (e) => {
+  const handleAddMore = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
-      const processed = await Promise.all(
-        newFiles.map(async (file) => {
-          const dataUrl = await fileToDataUrl(file);
-          return {
-            id: Math.random().toString(36).substring(2, 9),
-            file,
-            previewUrl: dataUrl,
-            name: file.name,
-          };
-        })
-      );
+      const processed = newFiles.map((file) => ({
+        id: Math.random().toString(36).substring(2, 9),
+        file,
+        previewUrl: URL.createObjectURL(file),
+        name: file.name,
+      }));
       setImages((prev) => [...prev, ...processed]);
     }
   };
 
-  // Remove individual image
+  // Remove individual image and free memory
   const handleRemove = (id) => {
     setImages((prev) => {
+      const imageToRemove = prev.find((img) => img.id === id);
+      if (imageToRemove) {
+        URL.revokeObjectURL(imageToRemove.previewUrl); // Free up RAM
+      }
+
       const filtered = prev.filter((img) => img.id !== id);
       if (filtered.length === 0) onReset();
       return filtered;
@@ -82,20 +68,12 @@ export default function JpgToPdf({ initialFiles, onReset }) {
     const newImages = [...images];
     const targetIndex = direction === 'left' ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= newImages.length) return;
+
     const temp = newImages[index];
     newImages[index] = newImages[targetIndex];
     newImages[targetIndex] = temp;
-    setImages(newImages);
-  };
 
-  // Measure image dimensions from Data URL
-  const loadImageDimensions = (dataUrl) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve({ element: img, width: img.width, height: img.height });
-      img.onerror = reject;
-      img.src = dataUrl;
-    });
+    setImages(newImages);
   };
 
   // Generate and download PDF
@@ -104,34 +82,53 @@ export default function JpgToPdf({ initialFiles, onReset }) {
     setIsProcessing(true);
 
     try {
-      const doc = new jsPDF({
-        orientation: orientation,
-        unit: 'mm',
-        format: pageSize === 'fit' ? 'a4' : pageSize,
-      });
+      const pdfDoc = await PDFDocument.create();
 
-      const marginValues = { none: 0, small: 10, big: 20 };
-      const currentMargin = marginValues[margin];
+      const A4_WIDTH = 595.28;
+      const A4_HEIGHT = 841.89;
+      const LETTER_WIDTH = 612;
+      const LETTER_HEIGHT = 792;
+
+      const marginMap = { none: 0, small: 28.35, big: 56.70 };
+      const currentMargin = marginMap[margin];
 
       for (let i = 0; i < images.length; i++) {
-        if (i > 0) doc.addPage();
+        const imgObj = images[i];
+        const fileBytes = await imgObj.file.arrayBuffer();
 
-        const imgData = await loadImageDimensions(images[i].previewUrl);
-
-        let pdfWidth = doc.internal.pageSize.getWidth();
-        let pdfHeight = doc.internal.pageSize.getHeight();
-
-        if (pageSize === 'fit') {
-          const imgAspect = imgData.width / imgData.height;
-          pdfWidth = 210;
-          pdfHeight = pdfWidth / imgAspect;
-          doc.setPage(i + 1);
+        let pdfImage;
+        if (imgObj.file.type === 'image/jpeg' || imgObj.file.type === 'image/jpg') {
+          pdfImage = await pdfDoc.embedJpg(fileBytes);
+        } else if (imgObj.file.type === 'image/png') {
+          pdfImage = await pdfDoc.embedPng(fileBytes);
+        } else {
+          console.warn(`Skipping unsupported format: ${imgObj.file.type}`);
+          continue;
         }
 
-        const printableWidth = pdfWidth - currentMargin * 2;
-        const printableHeight = pdfHeight - currentMargin * 2;
+        const imgWidth = pdfImage.width;
+        const imgHeight = pdfImage.height;
+        const imgRatio = imgWidth / imgHeight;
 
-        const imgRatio = imgData.width / imgData.height;
+        let pageW, pageH;
+
+        if (pageSize === 'fit') {
+          pageW = imgWidth + (currentMargin * 2);
+          pageH = imgHeight + (currentMargin * 2);
+        } else {
+          const isPortrait = orientation === 'portrait';
+          const stdW = pageSize === 'a4' ? A4_WIDTH : LETTER_WIDTH;
+          const stdH = pageSize === 'a4' ? A4_HEIGHT : LETTER_HEIGHT;
+
+          pageW = isPortrait ? stdW : stdH;
+          pageH = isPortrait ? stdH : stdW;
+        }
+
+        const page = pdfDoc.addPage([pageW, pageH]);
+
+        const printableWidth = pageW - (currentMargin * 2);
+        const printableHeight = pageH - (currentMargin * 2);
+
         let renderWidth = printableWidth;
         let renderHeight = printableWidth / imgRatio;
 
@@ -143,28 +140,33 @@ export default function JpgToPdf({ initialFiles, onReset }) {
         const x = currentMargin + (printableWidth - renderWidth) / 2;
         const y = currentMargin + (printableHeight - renderHeight) / 2;
 
-        const format = images[i].file.type.includes('png') ? 'PNG' : 'JPEG';
-
-        doc.addImage(images[i].previewUrl, format, x, y, renderWidth, renderHeight);
+        page.drawImage(pdfImage, {
+          x: x,
+          y: pageH - y - renderHeight,
+          width: renderWidth,
+          height: renderHeight,
+        });
       }
 
-      doc.save('magicpdf-converted.pdf');
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'magicpdf-converted.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
     } catch (err) {
       console.error('Failed to generate PDF:', err);
-      alert('An error occurred while generating the PDF.');
+      alert('An error occurred. Ensure your images are standard JPG or PNG files.');
     } finally {
       setIsProcessing(false);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="py-16 text-center space-y-3">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mx-auto" />
-        <p className="text-slate-300 text-sm">Loading image previews...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
