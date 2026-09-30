@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTheme } from './utils/useTheme'
 import Header from './components/Header'
 import DropZone from './components/DropZone'
 import JpgToPdf from './components/JpgToPdf'
@@ -10,6 +11,7 @@ const App = () => {
 
   const [activeTab, setActiveTab] = useState('jpg-to-pdf');
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const { theme, toggleTheme } = useTheme();
 
   const tabs = [
     { id: 'jpg-to-pdf', label: 'JPG to PDF', icon: Image, accept: 'image/jpeg, image/png, image/webp', multiple: true, title: 'Convert Images to PDF', subtitle: 'Drag & drop JPG/PNG images here' },
@@ -29,12 +31,12 @@ const App = () => {
   }
 
   return (
-    <div className='min-h-screen bg-slate-950 text-slate-100 flex flex-col'>
-      <Header />
+    <div className='min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-200'>
+      <Header theme={theme} toggleTheme={toggleTheme} />
 
       <main className='flex-1 max-w-4xl w-full mx-auto px-4 py-8'>
         {/* Tool Navigation Tabs */}
-        <div className='flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800 mb-8 max-w-md mx-auto'>
+        <div className='flex bg-slate-200/80 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800 mb-8 max-w-md mx-auto'>
           {
             tabs.map((tab) => {
               const Icon = tab.icon;
@@ -44,11 +46,10 @@ const App = () => {
                 <button
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-medium text-sm transition-all
-                    ${isActive
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-medium text-sm transition-all ${isActive
                       ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}
-                    `}
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-300/50 dark:hover:bg-slate-800/50'
+                    }`}
                 >
                   <Icon className='w-4 h-4' />
                   <span className='hidden sm:inline'>{tab.label}</span>
@@ -59,7 +60,7 @@ const App = () => {
         </div>
 
         {/* Dynamic Tool Container */}
-        <div className='bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl'>
+        <div className='bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl transition-colors duration-200'>
           {
             selectedFiles.length === 0 ? (
               <DropZone
@@ -79,7 +80,7 @@ const App = () => {
                 ) :
                   activeTab === 'compress-pdf' ? (
                     <CompressPdf file={selectedFiles[0]} onReset={() => setSelectedFiles([])} />
-                  ): null
+                  ) : null
           }
         </div>
       </main>

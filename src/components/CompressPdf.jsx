@@ -98,98 +98,99 @@ const CompressPdf = ({ file, onReset }) => {
     };
 
 
-    return (
-        <div className='space-y-6'>
-            {/* Top Summary */}
-            <div className='flex items-center justify-between bg-slate-800/60 p-4 rounded-2xl border border-slate-700/50'>
-                <div>
-                    <h2 className='text-lg font-semibold text-slate-100 truncate max-w-xs sm:max-w-md'>{file.name}</h2>
-                    <p className='text-xs text-slate-400'>Original Size: {formatBytes(file.size)}</p>
-                </div>
-                <button
-                    onClick={onReset}
-                    className='px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs rounded-xl transition-all'
-                >
-                    Change File
-                </button>
-            </div>
-
-            {/* Preset Cards */}
-            <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
-                {Object.entries(presets).map(([key, item]) => {
-                    const isSelected = compressionLevel === key;
-                    return (
-                        <div
-                            key={key}
-                            onClick={() => setCompressionLevel(key)}
-                            className={`p-4 rounded-2xl border cursor-pointer transition-all ${isSelected
-                                ? 'bg-indigo-600/15 border-indigo-500/60 text-slate-100 shadow-lg shadow-indigo-600/10'
-                                : 'bg-slate-800/40 border-slate-800 hover:border-slate-700 text-slate-400'
-                                }`}
-                        >
-                            <div className="flex items-center justify-between mb-2">
-                                <h3 className="text-sm font-semibold text-slate-200">{item.label}</h3>
-                                {isSelected && <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0" />}
-                            </div>
-                            <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* Always render the Compress / Re-Compress button */}
-            <button
-                onClick={handleCompress}
-                disabled={isCompressing}
-                className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 text-white font-semibold text-base rounded-2xl shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all"
-            >
-                {isCompressing ? (
-                    <RefreshCw className="w-5 h-5 animate-spin" />
-                ) : (
-                    <Minimize2 className="w-5 h-5" />
-                )}
-                {isCompressing
-                    ? 'Compressing PDF...'
-                    : compressedResult
-                        ? 'Re-compress with Selected Level'
-                        : 'Compress PDF File'}
-            </button>
-
-            {/* Results */}
-            {compressedResult && (
-                <div className="bg-slate-800/80 rounded-2xl border border-emerald-500/30 p-6 text-center space-y-4 animate-fade-in mt-6">
-                    <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-full w-fit mx-auto border border-emerald-500/20">
-                        <CheckCircle2 className="w-8 h-8" />
-                    </div>
-
-                    <div>
-                        <h3 className="text-xl font-bold text-slate-100">Compression Complete!</h3>
-                        <p className="text-sm text-slate-400 mt-1">
-                            Reduced from{' '}
-                            <span className="line-through text-slate-500">
-                                {formatBytes(compressedResult.originalSize)}
-                            </span>{' '}
-                            to{' '}
-                            <span className="text-emerald-400 font-semibold">
-                                {formatBytes(compressedResult.size)}
-                            </span>
-                        </p>
-                    </div>
-
-                    <div className="inline-block px-4 py-1.5 bg-emerald-500/20 text-emerald-300 font-bold text-sm rounded-full border border-emerald-500/30">
-                        {compressedResult.savingsPercent}% Smaller
-                    </div>
-
-                    <button
-                        onClick={handleDownload}
-                        className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-base rounded-2xl shadow-xl shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all"
-                    >
-                        <Download className="w-5 h-5" /> Download Compressed PDF
-                    </button>
-                </div>
-            )}
+   return (
+    <div className="space-y-6">
+      {/* Top Summary */}
+      <div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 truncate max-w-xs sm:max-w-md">{file.name}</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Original Size: {formatBytes(file.size)}</p>
         </div>
-    )
+        <button
+          onClick={onReset}
+          className="px-3 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 text-xs rounded-xl transition-all"
+        >
+          Change File
+        </button>
+      </div>
+
+      {/* Preset Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {Object.entries(presets).map(([key, item]) => {
+          const isSelected = compressionLevel === key;
+          return (
+            <div
+              key={key}
+              onClick={() => setCompressionLevel(key)}
+              className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                isSelected
+                  ? 'bg-indigo-50/80 dark:bg-indigo-600/15 border-indigo-500 dark:border-indigo-500/60 text-slate-900 dark:text-slate-100 shadow-lg shadow-indigo-600/10'
+                  : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-400'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{item.label}</h3>
+                {isSelected && <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />}
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Always render the Compress / Re-Compress button */}
+      <button
+        onClick={handleCompress}
+        disabled={isCompressing}
+        className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-semibold text-base rounded-2xl shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all"
+      >
+        {isCompressing ? (
+          <RefreshCw className="w-5 h-5 animate-spin" />
+        ) : (
+          <Minimize2 className="w-5 h-5" />
+        )}
+        {isCompressing
+          ? 'Compressing PDF...'
+          : compressedResult
+          ? 'Re-compress with Selected Level'
+          : 'Compress PDF File'}
+      </button>
+
+      {/* Results */}
+      {compressedResult && (
+        <div className="bg-emerald-50/60 dark:bg-slate-800/80 rounded-2xl border border-emerald-500/30 p-6 text-center space-y-4 animate-fade-in mt-6">
+          <div className="p-3 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full w-fit mx-auto border border-emerald-500/20">
+            <CheckCircle2 className="w-8 h-8" />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">Compression Complete!</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              Reduced from{' '}
+              <span className="line-through text-slate-400 dark:text-slate-500">
+                {formatBytes(compressedResult.originalSize)}
+              </span>{' '}
+              to{' '}
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                {formatBytes(compressedResult.size)}
+              </span>
+            </p>
+          </div>
+
+          <div className="inline-block px-4 py-1.5 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold text-sm rounded-full border border-emerald-500/30">
+            {compressedResult.savingsPercent}% Smaller
+          </div>
+
+          <button
+            onClick={handleDownload}
+            className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-base rounded-2xl shadow-xl shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all"
+          >
+            <Download className="w-5 h-5" /> Download Compressed PDF
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default CompressPdf

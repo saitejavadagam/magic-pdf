@@ -87,7 +87,7 @@ const DropZone = ({ onFilesSelected, accept, multiple = false, title, subtitle }
                 onClick={() => { fileInputRef.current?.click() }}
                 className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-200 ${isDragging
                     ? 'border-indigo-500 bg-indigo-500/10 scale-[0.99]'
-                    : 'border-slate-700 bg-slate-800/40 hover:border-slate-500 hover:bg-slate-800/80'
+                    : 'border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 hover:border-slate-400 dark:hover:border-slate-500 hover:bg-slate-100/80 dark:hover:bg-slate-800/80'
                     }`}
             >
 

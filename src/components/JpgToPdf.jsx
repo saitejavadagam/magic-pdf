@@ -169,23 +169,23 @@ export default function JpgToPdf({ initialFiles, onReset }) {
   return (
     <div className="space-y-6">
       {/* Top Action Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-800/60 p-4 rounded-2xl border border-slate-700/50">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-100 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/50">
         <div>
-          <h2 className="text-lg font-semibold text-slate-100">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
             {images.length} Image{images.length > 1 ? 's' : ''} Selected
           </h2>
-          <p className="text-xs text-slate-400">Reorder images or customize page layout settings below</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Reorder images or customize page layout settings below</p>
         </div>
 
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-xl cursor-pointer transition-all">
+          <label className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-xl cursor-pointer transition-all">
             <Plus className="w-4 h-4" /> Add More
             <input type="file" accept="image/jpeg, image/png, image/webp" multiple onChange={handleAddMore} className="hidden" />
           </label>
 
           <button
             onClick={onReset}
-            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs rounded-xl transition-all"
+            className="px-3 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 text-xs rounded-xl transition-all"
           >
             Clear All
           </button>
@@ -193,13 +193,13 @@ export default function JpgToPdf({ initialFiles, onReset }) {
       </div>
 
       {/* Settings Panel */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-800/40 p-4 rounded-2xl border border-slate-800">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
         <div>
-          <label className="text-xs font-medium text-slate-400 block mb-1.5">Page Orientation</label>
+          <label className="text-xs font-medium text-slate-500 dark:text-slate-400 block mb-1.5">Page Orientation</label>
           <select
             value={orientation}
             onChange={(e) => setOrientation(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl p-2.5 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-xl p-2.5 focus:outline-none focus:border-indigo-500"
           >
             <option value="portrait">Portrait</option>
             <option value="landscape">Landscape</option>
@@ -207,11 +207,11 @@ export default function JpgToPdf({ initialFiles, onReset }) {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-slate-400 block mb-1.5">Page Size</label>
+          <label className="text-xs font-medium text-slate-500 dark:text-slate-400 block mb-1.5">Page Size</label>
           <select
             value={pageSize}
             onChange={(e) => setPageSize(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl p-2.5 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-xl p-2.5 focus:outline-none focus:border-indigo-500"
           >
             <option value="a4">A4 (Standard)</option>
             <option value="letter">US Letter</option>
@@ -220,11 +220,11 @@ export default function JpgToPdf({ initialFiles, onReset }) {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-slate-400 block mb-1.5">Margins</label>
+          <label className="text-xs font-medium text-slate-500 dark:text-slate-400 block mb-1.5">Margins</label>
           <select
             value={margin}
             onChange={(e) => setMargin(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl p-2.5 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm rounded-xl p-2.5 focus:outline-none focus:border-indigo-500"
           >
             <option value="none">No Margin</option>
             <option value="small">Small Margin</option>
@@ -234,30 +234,30 @@ export default function JpgToPdf({ initialFiles, onReset }) {
       </div>
 
       {/* Image Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[400px] overflow-y-auto pr-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-100 overflow-y-auto pr-1">
         {images.map((img, index) => (
-          <div key={img.id} className="group relative bg-slate-800/80 rounded-xl border border-slate-700/60 p-2 flex flex-col items-center">
-            <div className="relative w-full aspect-[3/4] bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center">
+          <div key={img.id} className="group relative bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 p-2 flex flex-col items-center">
+            <div className="relative w-full aspect-3/4 bg-slate-200 dark:bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center">
               <img src={img.previewUrl} alt={img.name} className="max-w-full max-h-full object-contain" />
-              <span className="absolute top-2 left-2 px-2 py-0.5 bg-slate-900/80 backdrop-blur-md text-xs font-bold text-slate-300 rounded-md border border-slate-700">
+              <span className="absolute top-2 left-2 px-2 py-0.5 bg-white/90 dark:bg-slate-900/80 backdrop-blur-md text-xs font-bold text-slate-700 dark:text-slate-300 rounded-md border border-slate-300 dark:border-slate-700">
                 {index + 1}
               </span>
             </div>
 
-            <p className="text-[11px] text-slate-400 truncate w-full mt-2 text-center">{img.name}</p>
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 truncate w-full mt-2 text-center">{img.name}</p>
 
             <div className="flex items-center gap-1 mt-2">
               <button
                 disabled={index === 0}
                 onClick={() => handleMove(index, 'left')}
-                className="p-1.5 bg-slate-700 hover:bg-slate-600 disabled:opacity-30 text-slate-200 rounded-lg transition-all"
+                className="p-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-30 text-slate-700 dark:text-slate-200 rounded-lg transition-all"
                 title="Move Left"
               >
                 <MoveLeft className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => handleRemove(img.id)}
-                className="p-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-all"
+                className="p-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-500 dark:text-red-400 rounded-lg transition-all"
                 title="Remove"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -265,7 +265,7 @@ export default function JpgToPdf({ initialFiles, onReset }) {
               <button
                 disabled={index === images.length - 1}
                 onClick={() => handleMove(index, 'right')}
-                className="p-1.5 bg-slate-700 hover:bg-slate-600 disabled:opacity-30 text-slate-200 rounded-lg transition-all"
+                className="p-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-30 text-slate-700 dark:text-slate-200 rounded-lg transition-all"
                 title="Move Right"
               >
                 <MoveRight className="w-3.5 h-3.5" />
@@ -279,7 +279,7 @@ export default function JpgToPdf({ initialFiles, onReset }) {
       <button
         onClick={handleGeneratePdf}
         disabled={isProcessing || images.length === 0}
-        className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 text-white font-semibold text-base rounded-2xl shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all"
+        className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-semibold text-base rounded-2xl shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all"
       >
         <FileDown className="w-5 h-5" />
         {isProcessing ? 'Converting to PDF...' : 'Convert to PDF & Download'}
