@@ -6,6 +6,7 @@ import JpgToPdf from './components/JpgToPdf'
 import { Image, FileOutput, Minimize2 } from 'lucide-react'
 import PdfToJpg from './components/PdfToJpg'
 import CompressPdf from './components/CompressPdf'
+import Footer from './components/Footer'
 
 const App = () => {
 
@@ -47,8 +48,8 @@ const App = () => {
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-medium text-sm transition-all ${isActive
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-300/50 dark:hover:bg-slate-800/50'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-300/50 dark:hover:bg-slate-800/50'
                     }`}
                 >
                   <Icon className='w-4 h-4' />
@@ -84,6 +85,9 @@ const App = () => {
           }
         </div>
       </main>
+
+      <Footer />
+
     </div>
   )
 }
